@@ -333,7 +333,7 @@ RESULT eDVBSatelliteEquipmentControl::prepareSTelectronicSatCR(iDVBFrontend &fro
 	unsigned int positions = lnb_param.SatCR_positions ? lnb_param.SatCR_positions : 1;
 	unsigned int posnum = (lnb_param.SatCR_positionnumber > 0)							// position == 0 -> use position A
 				&& (lnb_param.SatCR_positionnumber <= MAX_FIXED_LNB_POSITIONS) 				// rotor with unicablelnb -> use only position A
-				&& (lnb_param.SatCR_positions == 2)							// has only one position -> use only position A
+				&& (positions > 1)									// has only one position -> use only position A
 				&& ((lnb_param.SatCR_positionnumber - 1) % positions) ?  1 : 0;				// odd numbers use position A; even numbers use position B
 
 	tuningword = ((vco - 1400000)/4000)
@@ -910,62 +910,65 @@ RESULT eDVBSatelliteEquipmentControl::prepare(iDVBFrontend &frontend, const eDVB
 				long pin = 0;
 //<<<
 //>>> TODO optimize this
-				switch(lnb_param.SatCR_format)
+				if(lnb_param.SatCR_switch_reliable)
 				{
-					case 1: //JESS
-						if(pin < 1)
-						{
-							diseqc.len = diseqc_a.len = 4;
-							diseqc.data[0] = diseqc_a.data[0] = 0x70;
-						}
-						else
-						{
-							diseqc.len = diseqc_a.len = 5;
-							diseqc.data[0] = diseqc_a.data[0] = 0x71;
-							diseqc.data[4] = diseqc_a.data[4] = pin;
-						}
-						diseqc.data[1] = lnb_param.GuardTuningWord >> 16;
-						diseqc.data[2] = lnb_param.GuardTuningWord >> 8;
-						diseqc.data[3] = lnb_param.GuardTuningWord;
+					switch(lnb_param.SatCR_format)
+					{
+						case 1: //JESS
+							if(pin < 1)
+							{
+								diseqc.len = diseqc_a.len = 4;
+								diseqc.data[0] = diseqc_a.data[0] = 0x70;
+							}
+							else
+							{
+								diseqc.len = diseqc_a.len = 5;
+								diseqc.data[0] = diseqc_a.data[0] = 0x71;
+								diseqc.data[4] = diseqc_a.data[4] = pin;
+							}
+							diseqc.data[1] = lnb_param.GuardTuningWord >> 16;
+							diseqc.data[2] = lnb_param.GuardTuningWord >> 8;
+							diseqc.data[3] = lnb_param.GuardTuningWord;
 
-						diseqc_a.data[1] = lnb_param.GuardTuningWord_a >> 16;
-						diseqc_a.data[2] = lnb_param.GuardTuningWord_a >> 8;
-						diseqc_a.data[3] = lnb_param.GuardTuningWord_a;
-						break;
-					case 0: //DiSEqC
-					default:
-						if(pin < 1)
-						{
-							diseqc.len = diseqc_a.len = 5;
-							diseqc.data[2] = diseqc_a.data[2] = 0x5A;
-						}
-						else
-						{
-							diseqc.len = diseqc_a.len = 6;
-							diseqc.data[2] = diseqc_a.data[2] = 0x5C;
-							diseqc.data[5] = diseqc_a.data[5] = pin;
-						}
-						diseqc.data[0] = diseqc_a.data[0] = 0xE0;
-						diseqc.data[1] = diseqc_a.data[1] = 0x10;
-						diseqc.data[3] = lnb_param.GuardTuningWord >> 8;
-						diseqc.data[4] = lnb_param.GuardTuningWord;
-						diseqc_a.data[3] = lnb_param.GuardTuningWord_a >> 8;
-						diseqc_a.data[4] = lnb_param.GuardTuningWord_a;
+							diseqc_a.data[1] = lnb_param.GuardTuningWord_a >> 16;
+							diseqc_a.data[2] = lnb_param.GuardTuningWord_a >> 8;
+							diseqc_a.data[3] = lnb_param.GuardTuningWord_a;
+							break;
+						case 0: //DiSEqC
+						default:
+							if(pin < 1)
+							{
+								diseqc.len = diseqc_a.len = 5;
+								diseqc.data[2] = diseqc_a.data[2] = 0x5A;
+							}
+							else
+							{
+								diseqc.len = diseqc_a.len = 6;
+								diseqc.data[2] = diseqc_a.data[2] = 0x5C;
+								diseqc.data[5] = diseqc_a.data[5] = pin;
+							}
+							diseqc.data[0] = diseqc_a.data[0] = 0xE0;
+							diseqc.data[1] = diseqc_a.data[1] = 0x10;
+							diseqc.data[3] = lnb_param.GuardTuningWord >> 8;
+							diseqc.data[4] = lnb_param.GuardTuningWord;
+							diseqc_a.data[3] = lnb_param.GuardTuningWord_a >> 8;
+							diseqc_a.data[4] = lnb_param.GuardTuningWord_a;
+					}
+					frontend.setData(eDVBFrontend::SATCR, lnb_param.SatCR_idx);
+
+					sec_sequence.push_back( eSecCommand(eSecCommand::IF_TUNER_UNLOCKED_GOTO, +12));	//skip all, if tuner unlocked
+					sec_sequence.push_back( eSecCommand(eSecCommand::SET_TIMEOUT, 4));
+					sec_sequence.push_back( eSecCommand(eSecCommand::SEND_DISEQC, diseqc));
+					sec_sequence.push_back( eSecCommand(eSecCommand::SLEEP, 25) );
+					sec_sequence.push_back( eSecCommand(eSecCommand::SET_VOLTAGE, VOLTAGE(13)));
+					sec_sequence.push_back( eSecCommand(eSecCommand::SLEEP, m_params[DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS]));
+					sec_sequence.push_back( eSecCommand(eSecCommand::SET_VOLTAGE, VOLTAGE(18)));
+					sec_sequence.push_back( eSecCommand(eSecCommand::SLEEP, m_params[DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS]));
+					sec_sequence.push_back( eSecCommand(eSecCommand::IF_TIMEOUT_GOTO, +4));	//skip all, if tuner unlocked
+					sec_sequence.push_back( eSecCommand(eSecCommand::IF_TUNER_UNLOCKED_GOTO, +3));	//skip all, if tuner unlocked
+					sec_sequence.push_back( eSecCommand(eSecCommand::SEND_DISEQC, diseqc_a));
+					sec_sequence.push_back( eSecCommand(eSecCommand::GOTO, -8));			//repeate until timeout
 				}
-				frontend.setData(eDVBFrontend::SATCR, lnb_param.SatCR_idx);
-
-				sec_sequence.push_back( eSecCommand(eSecCommand::IF_TUNER_UNLOCKED_GOTO, +12));	//skip all, if tuner unlocked
-				sec_sequence.push_back( eSecCommand(eSecCommand::SET_TIMEOUT, 4));
-				sec_sequence.push_back( eSecCommand(eSecCommand::SEND_DISEQC, diseqc));
-				sec_sequence.push_back( eSecCommand(eSecCommand::SLEEP, 25) );
-				sec_sequence.push_back( eSecCommand(eSecCommand::SET_VOLTAGE, VOLTAGE(13)));
-				sec_sequence.push_back( eSecCommand(eSecCommand::SLEEP, m_params[DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS]));
-				sec_sequence.push_back( eSecCommand(eSecCommand::SET_VOLTAGE, VOLTAGE(18)));
-				sec_sequence.push_back( eSecCommand(eSecCommand::SLEEP, m_params[DELAY_AFTER_VOLTAGE_CHANGE_BEFORE_SWITCH_CMDS]));
-				sec_sequence.push_back( eSecCommand(eSecCommand::IF_TIMEOUT_GOTO, +4));	//skip all, if tuner unlocked
-				sec_sequence.push_back( eSecCommand(eSecCommand::IF_TUNER_UNLOCKED_GOTO, +3));	//skip all, if tuner unlocked
-				sec_sequence.push_back( eSecCommand(eSecCommand::SEND_DISEQC, diseqc_a));
-				sec_sequence.push_back( eSecCommand(eSecCommand::GOTO, -8));			//repeate until timeout
 //<<<
 				switch(lnb_param.SatCR_format)
 				{
@@ -1483,6 +1486,18 @@ RESULT eDVBSatelliteEquipmentControl::setLNBSatCRpositionnumber(int SatCR_positi
 	return 0;
 }
 
+RESULT eDVBSatelliteEquipmentControl::setLNBSatCRTuningAlgo(int SatCR_switch_reliable)
+{
+	eSecDebug("eDVBSatelliteEquipmentControl::setLNBSatCRTuningAlgo(%d)", SatCR_switch_reliable);
+	if(!((SatCR_switch_reliable >= 0) && (SatCR_switch_reliable <= 1)))
+		return -EPERM;
+	if ( currentLNBValid() )
+		m_lnbs[m_lnbidx].SatCR_switch_reliable = SatCR_switch_reliable;
+	else
+		return -ENOENT;
+	return 0;
+}
+
 /* DiSEqC Specific Parameters */
 RESULT eDVBSatelliteEquipmentControl::setDiSEqCMode(int diseqcmode)
 {
@@ -1908,4 +1923,52 @@ void eDVBSatelliteEquipmentControl::setRotorMoving(int slot_no, bool b)
 		m_rotorMoving |= (1 << slot_no);
 	else
 		m_rotorMoving &= ~(1 << slot_no);
+}
+
+PyObject *eDVBSatelliteEquipmentControl::getBandCutOffFrequency(int slot_no, int orbital_position)
+{
+	PyObject *pyList = PyList_New(0);
+	for (int idx=0; idx <= m_lnbidx; ++idx)
+	{
+		eDVBSatelliteLNBParameters &lnb_param = m_lnbs[idx];
+		if ( lnb_param.m_slot_mask & (1 << slot_no)) // lnb for correct tuner?
+		{
+			std::map<int, eDVBSatelliteSwitchParameters>::iterator sit = lnb_param.m_satellites.find(orbital_position);
+			if ( sit != lnb_param.m_satellites.end())
+				PyList_Append(pyList, PyInt_FromLong(lnb_param.m_lof_threshold));
+		}
+	}
+	return pyList;
+}
+
+PyObject *eDVBSatelliteEquipmentControl::getFrequencyRangeList(int slot_no, int orbital_position)
+{
+	PyObject *pyList = PyList_New(0);
+	dvb_frontend_info fe_info;
+
+	eSmartPtrList<eDVBRegisteredFrontend>::iterator it(m_avail_frontends.begin());
+	for (; it != m_avail_frontends.end(); ++it)
+	{
+		if (it->m_frontend->getSlotID() == slot_no)
+		{
+			fe_info = ((eDVBFrontend*)it->m_frontend)->getFrontendInfo();
+		}
+	}
+
+	for (int idx=0; idx <= m_lnbidx; ++idx)
+	{
+		eDVBSatelliteLNBParameters &lnb_param = m_lnbs[idx];
+		if ( lnb_param.m_slot_mask & (1 << slot_no)) // lnb for correct tuner?
+		{
+			std::map<int, eDVBSatelliteSwitchParameters>::iterator sit = lnb_param.m_satellites.find(orbital_position);
+			if ( sit != lnb_param.m_satellites.end())
+			{
+				PyObject *pyTuple = PyTuple_New(2);
+				PyTuple_SET_ITEM(pyTuple, 0, PyInt_FromLong(lnb_param.m_lof_lo + fe_info.frequency_min));
+				PyTuple_SET_ITEM(pyTuple, 1, PyInt_FromLong(lnb_param.m_lof_hi + fe_info.frequency_max));
+				PyList_Append(pyList, pyTuple);
+			}
+		}
+	}
+	return pyList;
 }
