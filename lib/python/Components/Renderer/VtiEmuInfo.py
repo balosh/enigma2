@@ -1,4 +1,3 @@
-#Embedded file name: /media/build/vti-dorie/build/tmp/work/all-oe-linux/vti-addon/vti-addon-2.24-r20151008.9.0.3/Renderer/VtiEmuInfo.py
 from Components.config import config
 from Components.VariableText import VariableText
 from Renderer import Renderer

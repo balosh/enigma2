@@ -115,6 +115,14 @@ class ServiceList(HTMLComponent, GUIComponent):
 			self.l.setColor(eListboxServiceContent.eventForegroundFallback, parseColor(value))
 		def colorServiceDescriptionSelectedFallback(value):
 			self.l.setColor(eListboxServiceContent.eventForegroundSelectedFallback, parseColor(value))
+		def colorServiceRecording(value):
+			#not include yet
+			pass
+			#self.l.setColor(eListboxServiceContent.serviceRecordingColor, parseColor(value))
+		def colorServiceWithAdvertisment(value):
+			#not include yet
+			pass
+			#self.l.setColor(eListboxServiceContent.serviceAdvertismentColor, parseColor(value))
 		def picServiceEventProgressbar(value):
 			pic = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, value))
 			pic and self.l.setPixmap(self.l.picServiceEventProgressbar, pic)
@@ -144,12 +152,13 @@ class ServiceList(HTMLComponent, GUIComponent):
 			self.l.setNonplayableMargins(int(value))
 		def itemsDistances(value):
 			self.l.setItemsDistances(int(value))
-		for (attrib, value) in list(self.skinAttributes):
-			try:
-				locals().get(attrib)(value)
-				self.skinAttributes.remove((attrib, value))
-			except:
-				pass
+		if self.skinAttributes is not None:
+			for (attrib, value) in list(self.skinAttributes):
+				try:
+					locals().get(attrib)(value)
+					self.skinAttributes.remove((attrib, value))
+				except:
+					pass
 		rc = GUIComponent.applySkin(self, desktop, parent)
 		self.listHeight = self.instance.size().height()
 		self.listWidth = self.instance.size().width()

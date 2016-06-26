@@ -7,7 +7,7 @@ from Components.config import configfile
 from Components.PluginComponent import plugins
 from Components.config import config
 from Components.SystemInfo import SystemInfo
-
+from Components.Label import Label
 from Tools.BoundFunction import boundFunction
 from Tools.Directories import resolveFilename, SCOPE_SKIN
 
@@ -191,6 +191,10 @@ class Menu(Screen, ProtectedScreen):
 	def __init__(self, session, parent):
 		Screen.__init__(self, session)
 		list = []
+
+		self["green"] = Label()
+		self["yellow"] = Label()
+		self["blue"] = Label()
 
 		menuID = None
 		for x in parent:						#walk through the actual nodelist
