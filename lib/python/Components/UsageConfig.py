@@ -4,7 +4,7 @@ from enigma import eDVBDB, eEPGCache, setTunerTypePriorityOrder, setPreferredTun
 
 from Components.About import about
 from Components.Harddisk import harddiskmanager
-from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber
+from config import ConfigSubsection, ConfigYesNo, config, ConfigSelection, ConfigText, ConfigNumber, ConfigSet, ConfigLocations, NoSave, ConfigClock, ConfigInteger, ConfigBoolean, ConfigPassword, ConfigIP, ConfigSlider, ConfigSelectionNumber, ConfigDictionarySet
 from Tools.Directories import resolveFilename, SCOPE_HDD, SCOPE_TIMESHIFT, SCOPE_AUTORECORD, SCOPE_SYSETC, defaultRecordingLocation, fileExists
 from Components.NimManager import nimmanager
 from Components.ServiceList import refreshServiceList
@@ -101,7 +101,12 @@ def InitUsageConfig():
 	config.usage.show_spinner = ConfigYesNo(default = True)
 	config.usage.enable_tt_caching = ConfigYesNo(default = True)
 	config.usage.sort_settings = ConfigYesNo(default = False)
-	config.usage.sort_menus = ConfigYesNo(default = False)
+	config.usage.plugin_sort_weight = ConfigDictionarySet()
+	config.usage.menu_sort_weight = ConfigDictionarySet(default = { "mainmenu" : {"submenu" : {} }})
+	config.usage.menu_sort_mode = ConfigSelection(default = "user", choices = [
+		("a_z", _("alphabetical")),
+		("default", _("Default")),
+		("user", _("user defined")),])
 	config.usage.sort_pluginlist = ConfigYesNo(default = True)
 	config.usage.sort_extensionslist = ConfigYesNo(default = False)
 	config.usage.show_restart_network_extensionslist = ConfigYesNo(default = True)
