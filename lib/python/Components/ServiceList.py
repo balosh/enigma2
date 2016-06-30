@@ -116,13 +116,9 @@ class ServiceList(HTMLComponent, GUIComponent):
 		def colorServiceDescriptionSelectedFallback(value):
 			self.l.setColor(eListboxServiceContent.eventForegroundSelectedFallback, parseColor(value))
 		def colorServiceRecording(value):
-			#not include yet
-			pass
-			#self.l.setColor(eListboxServiceContent.serviceRecordingColor, parseColor(value))
+			self.l.setColor(eListboxServiceContent.serviceRecordingColor, parseColor(value))
 		def colorServiceWithAdvertisment(value):
-			#not include yet
-			pass
-			#self.l.setColor(eListboxServiceContent.serviceAdvertismentColor, parseColor(value))
+			self.l.setColor(eListboxServiceContent.serviceAdvertismentColor, parseColor(value))
 		def picServiceEventProgressbar(value):
 			pic = LoadPixmap(resolveFilename(SCOPE_ACTIVE_SKIN, value))
 			pic and self.l.setPixmap(self.l.picServiceEventProgressbar, pic)

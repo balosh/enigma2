@@ -451,7 +451,7 @@ class AttributeParser:
 	def font(self, value):
 		self.guiObject.setFont(parseFont(value, self.scaleTuple))
 	def secondfont(self, value):
-		#not include yet setSecondFont(parseFont(value, self.scaleTuple))
+		print"[adenin] include yet setSecondFont(parseFont(value, self.scaleTuple))"
 		self.guiObject.setFont(parseFont(value, self.scaleTuple))
 	def zPosition(self, value):
 		self.guiObject.setZPosition(int(value))
@@ -474,8 +474,8 @@ class AttributeParser:
 		self.guiObject.setScrollbarBackgroundPicture(ptr)
 	def scrollbarSliderPicture(self, value):
 		ptr = loadPixmap(value, self.desktop)
-		#not include yet
-		#self.guiObject.setScrollbarSliderPicture(ptr)
+		print"[adenin]==> setScrollbarSliderPicture"
+		self.guiObject.setScrollbarSliderPicture(ptr)
 	def scrollbarBackgroundPicture(self, value):
 		ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setScrollbarBackgroundPicture(ptr)
@@ -560,21 +560,17 @@ class AttributeParser:
 	def borderWidth(self, value):
 		self.guiObject.setBorderWidth(int(value))
 	def scrollbarSliderBorderWidth(self, value):
-		pass
-		#not include yet
-		#self.guiObject.setScrollbarSliderBorderWidth(int(value))
+		print "[adenin]==> scrollbarSliderBorderWidth"
+		self.guiObject.setScrollbarSliderBorderWidth(int(value))
 	def scrollbarWidth(self, value):
-		pass
-		#not include yet
-		#self.guiObject.setScrollbarWidth(int(value))
+		print "[adenin]==> scrollbarWidth"
+		self.guiObject.setScrollbarWidth(int(value))
 	def scrollbarSliderBorderColor(self, value):
-		pass
-		#not include yet
-		#self.setSliderBorderColor(parseColor(value))
+		print "[adenin]==> setSliderBorderColor"
+		self.guiObject.setSliderBorderColor(parseColor(value))
 	def scrollbarSliderForegroundColor(self, value):
-		pass
-		#not include yet
-		#self.setSliderForegroundColor(parseColor(value))
+		print "[adenin]==> setSliderForegroundColor"
+		self.guiObject.setSliderForegroundColor(parseColor(value))
 	def scrollbarMode(self, value):
 		self.guiObject.setScrollbarMode(getattr(self.guiObject, value))
 		#	{ "showOnDemand": self.guiObject.showOnDemand,
