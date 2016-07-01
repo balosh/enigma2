@@ -41,13 +41,6 @@ class title_History:
 		self.thistory = result[0] + '> '
 
 t_history = title_History()
-class boundFunction:
-	def __init__(self, fnc, *args):
-		self.fnc = fnc
-		self.args = args
-	def __call__(self):
-		self.fnc(*self.args)
-
 
 class MenuUpdater:
 	def __init__(self):
