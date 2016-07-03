@@ -118,15 +118,9 @@ int eSlider::event(int event, void *data, void *data2)
 		if (!m_pixmap)
 		{
 			if (m_have_sliderforeground_color)
-			{
-				eDebug("[adenin]m_have_sliderforeground_color %04x", m_sliderforeground_color);
 				painter.setForegroundColor(m_sliderforeground_color);
-			}
 			else if (m_have_foreground_color)
-			{
-				eDebug("[adenin]m_have_foreground_color %04x", m_foreground_color);
 				painter.setForegroundColor(m_foreground_color);
-			}
 			painter.fill(m_currently_filled);
 		}
 		else
@@ -135,27 +129,15 @@ int eSlider::event(int event, void *data, void *data2)
 // border
 
 		if (m_have_sliderborder_color)
-		{
-			eDebug("[adenin]m_have_sliderborder_color %04x", m_sliderborder_color);
 			painter.setForegroundColor(m_sliderborder_color);
-		}
 		else if (m_have_border_color)
-		{
-			eDebug("[adenin]m_have_border_color %04x", m_border_color);
 			painter.setForegroundColor(m_border_color);
-		}
 
 		int bw;
 		if(m_have_sliderborder_width)
-		{
-			eDebug("[adenin] m_have_sliderborder_width %d", m_sliderborder_width);
 			bw = m_sliderborder_width;
-		}
 		else
-		{
-			eDebug("[adenin] use m_border_width %d", m_border_width);
 			bw = m_border_width;
-		}
 		painter.fill(eRect(0, 0, s.width(), bw));
 		painter.fill(eRect(0, bw, bw, s.height() - bw));
 		painter.fill(eRect(bw, s.height() - bw, s.width() - bw, bw));
