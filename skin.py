@@ -451,8 +451,7 @@ class AttributeParser:
 	def font(self, value):
 		self.guiObject.setFont(parseFont(value, self.scaleTuple))
 	def secondfont(self, value):
-		print"[adenin] include yet setSecondFont(parseFont(value, self.scaleTuple))"
-		self.guiObject.setFont(parseFont(value, self.scaleTuple))
+		self.guiObject.setSecondFont(parseFont(value, self.scaleTuple))
 	def zPosition(self, value):
 		self.guiObject.setZPosition(int(value))
 	def itemHeight(self, value):

@@ -567,6 +567,11 @@ void eListbox::setFont(gFont *font)
 	m_style.m_font = font;
 }
 
+void eListbox::setSecondFont(gFont *font)
+{
+	m_style.m_secondfont = font;
+}
+
 void eListbox::setVAlign(int align)
 {
 	m_style.m_valign = align;

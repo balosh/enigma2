@@ -82,7 +82,7 @@ struct eListboxStyle
 		alignBlock
 	};
 	int m_valign, m_halign, m_border_size, m_sliderborder_size, m_scrollbarsliderborder_size;
-	ePtr<gFont> m_font;
+	ePtr<gFont> m_font, m_secondfont;
 	ePoint m_text_offset;
 };
 #endif
@@ -152,6 +152,7 @@ public:
 	void setScrollbarWidth(int size);
 
 	void setFont(gFont *font);
+	void setSecondFont(gFont *font);
 	void setVAlign(int align);
 	void setHAlign(int align);
 	void setTextOffset(const ePoint &textoffset);
