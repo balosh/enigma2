@@ -460,23 +460,41 @@ class AttributeParser:
 		ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setPixmap(ptr)
 	def backgroundPixmap(self, value):
-		ptr = loadPixmap(value, self.desktop)
+		if not fileExists(value):
+			ptr = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, value), self.desktop)
+		else:
+			ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setBackgroundPicture(ptr)
 	def selectionPixmap(self, value):
-		ptr = loadPixmap(value, self.desktop)
+		if not fileExists(value):
+			ptr = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, value), self.desktop)
+		else:
+			ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setSelectionPicture(ptr)
 	def sliderPixmap(self, value):
-		ptr = loadPixmap(value, self.desktop)
+		if not fileExists(value):
+			ptr = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, value), self.desktop)
+		else:
+			ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setSliderPicture(ptr)
 	def scrollbarbackgroundPixmap(self, value):
-		ptr = loadPixmap(value, self.desktop)
+		if not fileExists(value):
+			ptr = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, value), self.desktop)
+		else:
+			ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setScrollbarBackgroundPicture(ptr)
 	def scrollbarSliderPicture(self, value):
-		ptr = loadPixmap(value, self.desktop)
+		if not fileExists(value):
+			ptr = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, value), self.desktop)
+		else:
+			ptr = loadPixmap(value, self.desktop)
 		print"[adenin]==> setScrollbarSliderPicture"
 		self.guiObject.setScrollbarSliderPicture(ptr)
 	def scrollbarBackgroundPicture(self, value):
-		ptr = loadPixmap(value, self.desktop)
+		if not fileExists(value):
+			ptr = loadPixmap(resolveFilename(SCOPE_SKIN_IMAGE, value), self.desktop)
+		else:
+			ptr = loadPixmap(value, self.desktop)
 		self.guiObject.setScrollbarBackgroundPicture(ptr)
 	def alphatest(self, value):
 		self.guiObject.setAlphatest(
